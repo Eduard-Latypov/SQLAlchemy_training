@@ -4,7 +4,17 @@ import sys
 import enum
 from typing import Annotated
 
-from sqlalchemy import String, ForeignKey, text
+from sqlalchemy import (
+    String,
+    ForeignKey,
+    text,
+    Table,
+    MetaData,
+    Column,
+    Integer,
+    TIMESTAMP,
+    Enum,
+)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -49,3 +59,34 @@ class Resumes(Model):
     worker_id: Mapped[int] = mapped_column(ForeignKey("workers.id", ondelete="CASCADE"))
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
+
+
+metadata = MetaData()
+
+workers_table = Table(
+    "workers",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column(
+        "username",
+        String(20),
+    ),
+    Column("age", Integer),
+)
+
+resumes_table = Table(
+    "resumes",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("title", String(64)),
+    Column("compensation", Integer, nullable=True),
+    Column("workload", Enum(Workload)),
+    Column("worker_id", ForeignKey("workers.id", ondelete="CASCADE")),
+    Column("created_at", TIMESTAMP, server_default=text("TIMEZONE('utc', now())")),
+    Column(
+        "updated_at",
+        TIMESTAMP,
+        server_default=text("TIMEZONE('utc', now())"),
+        onupdate=datetime.datetime.utcnow,
+    ),
+)
