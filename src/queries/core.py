@@ -1,6 +1,6 @@
 import asyncio
 
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, update
 
 from src.models import workers_table, metadata, Model, Workers, Resumes
 from src.database import sync_engine, async_engine, sync_session, async_session
@@ -37,6 +37,17 @@ class SyncCore:
             workers = result.all()
             return workers
 
+    @staticmethod
+    def update_worker(worker_id: int = 1, new_username: str = "Alhimiya"):
+        with sync_engine.connect() as conn:
+            smtm = (
+                update(workers_table)
+                .values(username=new_username)
+                .filter_by(id=worker_id)
+            )
+            conn.execute(smtm)
+            conn.commit()
+
 
 # Asynchronous
 class AsyncCore:
@@ -69,3 +80,12 @@ class AsyncCore:
             result = await conn.execute(query)
             workers = result.all()
             return workers
+
+    @staticmethod
+    async def update_worker(worker_id: int = 1, new_username: str = "test_username"):
+        async with async_session() as conn:
+            query = (
+                update(Workers).values(username=new_username).filter_by(id=worker_id)
+            )
+            await conn.execute(query)
+            await conn.commit()

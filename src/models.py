@@ -43,6 +43,9 @@ class Workers(Model):
     username: Mapped[str] = mapped_column(String(20))
     age: Mapped[int | None]
 
+    def __str__(self):
+        return f"{self.id}: {self.username} {self.age} years"
+
 
 class Workload(enum.Enum):
     fulltime = "fulltime"
