@@ -2,7 +2,7 @@ import asyncio
 
 from sqlalchemy import insert, select, update
 
-from src.models import workers_table, metadata, Model, Workers, Resumes
+from src.models import workers_table, metadata, Base, Workers, Resumes
 from src.database import sync_engine, async_engine, sync_session, async_session
 
 

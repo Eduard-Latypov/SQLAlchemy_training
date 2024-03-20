@@ -31,7 +31,7 @@ updated_at = Annotated[
 ]
 
 
-class Model(DeclarativeBase):
+class Base(DeclarativeBase):
 
     col_cnt = 3
     columns = tuple()
@@ -44,7 +44,7 @@ class Model(DeclarativeBase):
         return ", ".join(cols)
 
 
-class Workers(Model):
+class Workers(Base):
     __tablename__ = "workers"
 
     id: Mapped[int_pk]
@@ -58,7 +58,7 @@ class Workload(enum.Enum):
     parttime = "parttime"
 
 
-class Resumes(Model):
+class Resumes(Base):
     __tablename__ = "resumes"
 
     id: Mapped[int_pk]

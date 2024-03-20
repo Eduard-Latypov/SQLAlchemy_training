@@ -6,7 +6,7 @@ from sqlalchemy.orm import selectinload, joinedload
 
 
 from src.database import sync_engine, async_engine, sync_session, async_session
-from src.models import Model, Workers, Resumes, Workload
+from src.models import Base, Workers, Resumes, Workload
 from src.schemas import WorkerRelDTO, ResumeRelDTO, WorkerGetDTO
 
 from faker import Faker
@@ -19,8 +19,8 @@ class SyncORM:
     @staticmethod
     def create_tables():
         sync_engine.echo = False
-        Model.metadata.drop_all(sync_engine)
-        Model.metadata.create_all(sync_engine)
+        Base.metadata.drop_all(sync_engine)
+        Base.metadata.create_all(sync_engine)
         sync_engine.echo = True
 
     @staticmethod
@@ -47,8 +47,8 @@ class AsyncORM:
     async def create_tables():
         async_engine.echo = False
         async with async_engine.begin() as conn:
-            await conn.run_sync(Model.metadata.drop_all)
-            await conn.run_sync(Model.metadata.create_all)
+            await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.create_all)
         async_engine.echo = True
 
     @staticmethod
