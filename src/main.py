@@ -22,7 +22,8 @@ async def async_main():
         print(
             f"{item.id}: {item.title} {item.compensation} {item.workload} {item.worker_id}"
         )
-    await AsyncORM.custom_select()
+    # await AsyncORM.custom_select()
+    await AsyncORM.selectin_workers_with_resumes()
 
 
 if __name__ == "__main__":

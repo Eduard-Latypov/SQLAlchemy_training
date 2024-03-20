@@ -15,8 +15,7 @@ from sqlalchemy import (
     TIMESTAMP,
     Enum,
 )
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 int_pk = Annotated[int, mapped_column(primary_key=True)]
 created_at = Annotated[
@@ -33,7 +32,16 @@ updated_at = Annotated[
 
 
 class Model(DeclarativeBase):
-    pass
+
+    col_cnt = 3
+    columns = tuple()
+
+    def __repr__(self):
+        cols = []
+        for idx, col in enumerate(self.__table__.columns.keys()):
+            if col in self.columns or idx < self.col_cnt:
+                cols.append(str(getattr(self, col)))
+        return ", ".join(cols)
 
 
 class Workers(Model):
@@ -42,9 +50,7 @@ class Workers(Model):
     id: Mapped[int_pk]
     username: Mapped[str] = mapped_column(String(20))
     age: Mapped[int | None]
-
-    def __str__(self):
-        return f"{self.id}: {self.username} {self.age} years"
+    resumes: Mapped[list["Resumes"]] = relationship(back_populates="worker")
 
 
 class Workload(enum.Enum):
@@ -60,6 +66,7 @@ class Resumes(Model):
     compensation: Mapped[int | None]
     workload: Mapped[Workload]
     worker_id: Mapped[int] = mapped_column(ForeignKey("workers.id", ondelete="CASCADE"))
+    worker: Mapped["Workers"] = relationship(back_populates="resumes")
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 

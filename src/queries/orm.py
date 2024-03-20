@@ -1,6 +1,9 @@
+import asyncio
 import random
 
 from sqlalchemy import select, update, func, and_, cast, Integer
+from sqlalchemy.orm import selectinload, joinedload
+
 
 from src.database import sync_engine, async_engine, sync_session, async_session
 from src.models import Model, Workers, Resumes, Workload
@@ -123,3 +126,31 @@ class AsyncORM:
             )
             res = await conn.execute(query)
             print(res.all())
+
+    @staticmethod
+    async def joined_workers_with_resumes():
+        """
+        Джоинит таблицу резюме.
+        Подходит для о2о и м2о
+        """
+        async with async_session() as conn:
+            query = select(Workers).options(joinedload(Workers.resumes))
+            res = await conn.execute(query)
+            workers = res.scalars().unique().all()
+            print(workers[0].resumes)
+            print(workers[1].resumes)
+            await conn.commit()
+
+    @staticmethod
+    async def selectin_workers_with_resumes():
+        """
+        Select таблицу резюме.
+        Подходит для о2м и м2м
+        """
+        async with async_session() as conn:
+            query = select(Workers).options(selectinload(Workers.resumes))
+            res = await conn.execute(query)
+            workers = res.scalars().all()
+            print(workers[0].resumes)
+            print(workers[1].resumes)
+            await conn.commit()
