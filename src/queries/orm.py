@@ -7,6 +7,7 @@ from sqlalchemy.orm import selectinload, joinedload
 
 from src.database import sync_engine, async_engine, sync_session, async_session
 from src.models import Model, Workers, Resumes, Workload
+from src.schemas import WorkerRelDTO, ResumeRelDTO, WorkerGetDTO
 
 from faker import Faker
 
@@ -93,7 +94,7 @@ class AsyncORM:
             for _ in range(20):
                 title = random.choice(["Python", "Data_scientist"])
                 compensation = random.randrange(100000, 300000, 10000)
-                workload = random.choice(list(_ for _ in Workload))
+                workload = random.choice([Workload.fulltime, Workload.parttime])
                 worker_id = random.randint(1, 3)
                 resume = Resumes(
                     title=title,
@@ -154,3 +155,15 @@ class AsyncORM:
             print(workers[0].resumes)
             print(workers[1].resumes)
             await conn.commit()
+
+    @staticmethod
+    async def worker_to_dto():
+        async with async_session() as conn:
+            query = select(Workers).options(selectinload(Workers.resumes)).limit(3)
+            res = await conn.execute(query)
+            workers = res.scalars().all()
+            workers_dto = [
+                WorkerRelDTO.model_validate(model, from_attributes=True)
+                for model in workers
+            ]
+            return workers_dto

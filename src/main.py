@@ -24,6 +24,8 @@ async def async_main():
         )
     # await AsyncORM.custom_select()
     await AsyncORM.selectin_workers_with_resumes()
+    dto = await AsyncORM.worker_to_dto()
+    print(dto)
 
 
 if __name__ == "__main__":
