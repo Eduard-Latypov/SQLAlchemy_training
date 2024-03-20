@@ -53,7 +53,7 @@ class Workers(Base):
     resumes: Mapped[list["Resumes"]] = relationship(back_populates="worker")
 
 
-class Workload(enum.Enum):
+class WorkloadEnum(enum.Enum):
     fulltime = "fulltime"
     parttime = "parttime"
 
@@ -64,39 +64,39 @@ class Resumes(Base):
     id: Mapped[int_pk]
     title: Mapped[str] = mapped_column(String(64))
     compensation: Mapped[int | None]
-    workload: Mapped[Workload]
+    workload: Mapped[WorkloadEnum]
     worker_id: Mapped[int] = mapped_column(ForeignKey("workers.id", ondelete="CASCADE"))
     worker: Mapped["Workers"] = relationship(back_populates="resumes")
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
 
-metadata = MetaData()
+# metadata = MetaData()
+#
+# workers_table = Table(
+#     "workers",
+#     metadata,
+#     Column("id", Integer, primary_key=True),
+#     Column(
+#         "username",
+#         String(20),
+#     ),
+#     Column("age", Integer),
+# )
 
-workers_table = Table(
-    "workers",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column(
-        "username",
-        String(20),
-    ),
-    Column("age", Integer),
-)
-
-resumes_table = Table(
-    "resumes",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("title", String(64)),
-    Column("compensation", Integer, nullable=True),
-    Column("workload", Enum(Workload)),
-    Column("worker_id", ForeignKey("workers.id", ondelete="CASCADE")),
-    Column("created_at", TIMESTAMP, server_default=text("TIMEZONE('utc', now())")),
-    Column(
-        "updated_at",
-        TIMESTAMP,
-        server_default=text("TIMEZONE('utc', now())"),
-        onupdate=datetime.datetime.utcnow,
-    ),
-)
+# resumes_table = Table(
+#     "resumes",
+#     metadata,
+#     Column("id", Integer, primary_key=True),
+#     Column("title", String(64)),
+#     Column("compensation", Integer, nullable=True),
+#     Column("workload", Enum(WorkloadEnum)),
+#     Column("worker_id", ForeignKey("workers.id", ondelete="CASCADE")),
+#     Column("created_at", TIMESTAMP, server_default=text("TIMEZONE('utc', now())")),
+#     Column(
+#         "updated_at",
+#         TIMESTAMP,
+#         server_default=text("TIMEZONE('utc', now())"),
+#         onupdate=datetime.datetime.utcnow,
+#     ),
+# )

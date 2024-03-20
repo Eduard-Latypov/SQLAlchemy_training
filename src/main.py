@@ -31,7 +31,7 @@ async def async_main():
     await AsyncORM.selectin_workers_with_resumes()
     dto = await AsyncORM.worker_to_dto()
     print(dto)
-    print(settings.async_url)
+    await AsyncORM.delete_tables()
 
 
 if __name__ == "__main__":
